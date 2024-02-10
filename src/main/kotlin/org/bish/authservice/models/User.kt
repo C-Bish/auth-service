@@ -1,6 +1,5 @@
 package org.bish.authservice.models
 
-import jakarta.annotation.Generated
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -11,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails
 @Table(name = "USERS")
 class User (
     @Id
-    @Generated
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     val id: Long? = null,
 
     @Column(name = "NAME")
@@ -35,8 +34,10 @@ class User (
     @Column(name = "IS_LOCKED")
     val isLocked: Boolean = false,
 
+    @Transient
     private val isCredentialsExpired: Boolean = false,
 
+    @Transient
     private val isEnabled: Boolean = true,
 
     @ManyToMany()

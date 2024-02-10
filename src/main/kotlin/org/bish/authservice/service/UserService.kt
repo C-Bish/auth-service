@@ -2,7 +2,6 @@ package org.bish.authservice.service
 
 import org.bish.authservice.dto.UserLoginDTO
 import org.bish.authservice.dto.UserRegistrationDTO
-import org.bish.authservice.models.User
 import org.bish.authservice.repo.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -19,10 +18,7 @@ class UserService(val userRepository: UserRepository): UserDetailsService {
      * @return
      */
     override fun loadUserByUsername(username: String): UserDetails {
-        val user : User = userRepository.findByName(username)
-        if (user.name == null) {
-            throw UsernameNotFoundException("User not found")
-        }
+        val user = userRepository.findByName(username) ?: throw UsernameNotFoundException("User not found")
         return user
     }
 
@@ -63,7 +59,7 @@ class UserService(val userRepository: UserRepository): UserDetailsService {
 
     private fun isUsernameAvailable(username: String) : Boolean {
         val user = userRepository.findByName(username)
-        return username != user.name
+        return user == null
     }
 
 }
