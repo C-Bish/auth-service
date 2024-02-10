@@ -1,48 +1,40 @@
 package org.bish.authservice.config
 
-import org.bish.authservice.filters.CustomFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.Customizer.withDefaults
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
-import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
-import org.springframework.security.oauth2.core.user.OAuth2UserAuthority
-import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
-class SecurityConfig {
+@EnableWebSecurity
+class SecurityConfig(val userDetailsService: UserDetailsService) {
 
     @Bean
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        http
-            .authorizeHttpRequests { authorize ->
-                authorize.requestMatchers("/public").permitAll()
-                authorize.requestMatchers("/private").authenticated()
-            }
-            .oauth2Login { oauth2Login ->
-                oauth2Login.userInfoEndpoint { userInfoEndpoint ->
-                    userInfoEndpoint.userAuthoritiesMapper(grantedAuthoritiesMapper())
-                }
-            }
-            .addFilterBefore(CustomFilter(), BasicAuthenticationFilter::class.java)
-            .httpBasic(withDefaults())
-        return http.build()
+    fun configure(auth: AuthenticationManagerBuilder) {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder())
     }
 
-    private fun grantedAuthoritiesMapper(): GrantedAuthoritiesMapper {
-        return GrantedAuthoritiesMapper { authorities ->
-            authorities.map { authority ->
-                when (authority) {
-                    is OidcUserAuthority ->
-                        OidcUserAuthority("ROLE_USER", authority.idToken, authority.userInfo)
-                    is OAuth2UserAuthority ->
-                        OAuth2UserAuthority("ROLE_USER", authority.attributes)
-                    else -> authority
-                }
+    @Bean
+    fun configure(http: HttpSecurity) {
+        http
+            .authorizeHttpRequests { authorize ->
+                authorize.requestMatchers("/api/register").permitAll()
+                authorize.anyRequest().authenticated()
             }
-        }
+            .formLogin { login ->
+                login.loginProcessingUrl("/api/login").permitAll()
+            }
+            .logout { logout ->
+                logout.logoutUrl("api/logout").permitAll()
+            }
+    }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
     }
 }
