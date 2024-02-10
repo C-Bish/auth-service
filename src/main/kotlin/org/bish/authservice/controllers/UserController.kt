@@ -30,6 +30,7 @@ class UserController(val userService: UserService) {
     @PostMapping("/logout")
     fun logout() : ResponseEntity<*> {
         // Perform logout logic, including token/session invalidation
+        userService.logout()
         return ResponseEntity.ok("Logout successful")
     }
 

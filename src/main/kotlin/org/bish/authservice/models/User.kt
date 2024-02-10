@@ -27,7 +27,7 @@ class User (
     val email: String? = null,
 
     @Column(name = "PASSWORD")
-    val password: String? = null,
+    private val password: String? = null,
 
     @Column(name = "IS_EXPIRED")
     val isExpired: Boolean = false,
@@ -57,12 +57,12 @@ class User (
         return grantedAuthorities
     }
 
-    override fun getPassword(): String? {
-        return password
+    override fun getPassword(): String {
+        return password!!
     }
 
-    override fun getUsername(): String? {
-        return name
+    override fun getUsername(): String {
+        return name!!
     }
 
     override fun isAccountNonExpired(): Boolean {

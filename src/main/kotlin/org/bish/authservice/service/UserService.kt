@@ -55,10 +55,9 @@ class UserService(val userRepository: UserRepository): UserDetailsService {
     /**
      * Performs logout process for a user.
      *
-     * @param username
      * @return
      */
-    fun logout(username: String) : Boolean {
+    fun logout() : Boolean {
         return true
     }
 
