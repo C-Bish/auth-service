@@ -33,7 +33,13 @@ class UserService(val userRepository: UserRepository): UserDetailsService {
      * @return
      */
     fun registerUser(userDTO: UserRegistrationDTO) : Boolean {
-        return true
+        if (isUsernameAvailable(userDTO.name)) {
+            userRepository.save(userDTO.transform())
+            return true
+        }
+
+        // User cannot be registered as username is taken.
+        return false
     }
 
     /**
@@ -54,6 +60,11 @@ class UserService(val userRepository: UserRepository): UserDetailsService {
      */
     fun logout(username: String) : Boolean {
         return true
+    }
+
+    private fun isUsernameAvailable(username: String) : Boolean {
+        val user = userRepository.findByName(username)
+        return username != user.name
     }
 
 }

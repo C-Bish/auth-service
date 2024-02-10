@@ -1,4 +1,17 @@
 package org.bish.authservice.dto
 
-class UserRegistrationDTO {
+import org.bish.authservice.models.User
+
+class UserRegistrationDTO(
+    val name: String,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val password: String
+) {
+
+    fun transform(): User {
+        return User(null, name, firstName, lastName, email, password)
+    }
+
 }
