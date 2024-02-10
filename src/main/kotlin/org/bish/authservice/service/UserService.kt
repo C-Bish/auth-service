@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(@Autowired val userRepository: UserRepository): UserDetailsService {
+class UserService(@Autowired val userRepository: UserRepository, val passwordService: PasswordService): UserDetailsService {
 
     /**
      * Loads a single User with a username.
@@ -31,6 +31,9 @@ class UserService(@Autowired val userRepository: UserRepository): UserDetailsSer
      */
     fun registerUser(userDTO: UserRegistrationDTO) : Boolean {
         if (isUsernameAvailable(userDTO.name, userDTO.email)) {
+            // Perform password hashing
+            passwordService.encode(userDTO)
+
             userRepository.save(userDTO.transform())
             return true
         }

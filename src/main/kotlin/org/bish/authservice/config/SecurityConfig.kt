@@ -7,21 +7,20 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(val userDetailsService: UserDetailsService) {
+class SecurityConfig(val encoder: PasswordEncoder, val userDetailsService: UserDetailsService) {
 
     @Bean
     fun filterChain(http: HttpSecurity) : SecurityFilterChain {
 
         // Configure AuthenticationManagerBuilder
         val authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder::class.java)
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder())
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(encoder)
 
         // Get AuthenticationManager
         val authenticationManager = authenticationManagerBuilder.build()
@@ -45,11 +44,4 @@ class SecurityConfig(val userDetailsService: UserDetailsService) {
         return http.build()
     }
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
-
-    @Bean
-    fun customUserDetailsService() = userDetailsService
 }

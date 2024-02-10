@@ -40,7 +40,7 @@ class User (
     @Transient
     private val isEnabled: Boolean = true,
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "USERS_ROLES",
         joinColumns = [JoinColumn(name="USERS_ID", referencedColumnName="ID")],
