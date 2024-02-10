@@ -3,13 +3,14 @@ package org.bish.authservice.service
 import org.bish.authservice.dto.UserLoginDTO
 import org.bish.authservice.dto.UserRegistrationDTO
 import org.bish.authservice.repo.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(val userRepository: UserRepository): UserDetailsService {
+class UserService(@Autowired val userRepository: UserRepository): UserDetailsService {
 
     /**
      * Loads a single User with a username.
@@ -29,7 +30,7 @@ class UserService(val userRepository: UserRepository): UserDetailsService {
      * @return
      */
     fun registerUser(userDTO: UserRegistrationDTO) : Boolean {
-        if (isUsernameAvailable(userDTO.name)) {
+        if (isUsernameAvailable(userDTO.name, userDTO.email)) {
             userRepository.save(userDTO.transform())
             return true
         }
@@ -57,8 +58,16 @@ class UserService(val userRepository: UserRepository): UserDetailsService {
         return true
     }
 
-    private fun isUsernameAvailable(username: String) : Boolean {
-        val user = userRepository.findByName(username)
+    private fun isUsernameAvailable(username: String, email: String) : Boolean {
+
+        // Search by username
+        var user = userRepository.findByName(username)
+        if (user != null) {
+            return false
+        }
+
+        // Search by email
+        user = userRepository.findByEmail(email)
         return user == null
     }
 

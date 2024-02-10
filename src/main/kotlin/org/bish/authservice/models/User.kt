@@ -67,7 +67,7 @@ class User (
     }
 
     override fun isAccountNonExpired(): Boolean {
-        return isExpired
+        return !isExpired
     }
 
     override fun isAccountNonLocked(): Boolean {

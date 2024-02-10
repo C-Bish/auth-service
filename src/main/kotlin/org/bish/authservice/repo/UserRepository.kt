@@ -13,4 +13,12 @@ interface UserRepository : JpaRepository<User, Long> {
      */
     fun findByName(name: String): User?
 
+    /**
+     * Find the user with the given email.
+     *
+     * @param email
+     * @return
+     */
+    fun findByEmail(email: String): User?
+
 }

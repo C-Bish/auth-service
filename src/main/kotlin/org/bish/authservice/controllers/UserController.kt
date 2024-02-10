@@ -16,8 +16,11 @@ class UserController(val userService: UserService) {
 
     @PostMapping("/register")
     fun registerUser(@RequestBody userDTO: UserRegistrationDTO) : ResponseEntity<*> {
-        userService.registerUser(userDTO)
-        return ResponseEntity.ok("User registered successfully")
+        val registered = userService.registerUser(userDTO)
+        if (registered) {
+            return ResponseEntity.ok("User registered successfully.")
+        }
+        return ResponseEntity.badRequest().body("User could not be registered.")
     }
 
     @PostMapping("/login")
