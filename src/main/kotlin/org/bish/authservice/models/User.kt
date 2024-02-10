@@ -3,7 +3,9 @@ package org.bish.authservice.models
 import jakarta.annotation.Generated
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+
 
 @Entity
 @Table(name = "USERS")
@@ -27,6 +29,16 @@ class User (
     @Column(name = "PASSWORD")
     val password: String? = null,
 
+    @Column(name = "IS_EXPIRED")
+    val isExpired: Boolean = false,
+
+    @Column(name = "IS_LOCKED")
+    val isLocked: Boolean = false,
+
+    private val isCredentialsExpired: Boolean = false,
+
+    private val isEnabled: Boolean = true,
+
     @ManyToMany()
     @JoinTable(
         name = "USERS_ROLES",
@@ -36,31 +48,37 @@ class User (
     val roles: Set<Role>? = mutableSetOf()
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        TODO("Not yet implemented")
+        val grantedAuthorities: MutableSet<GrantedAuthority> = mutableSetOf()
+        if (roles != null) {
+            for (role in roles) {
+                grantedAuthorities.add(SimpleGrantedAuthority("ROLE_" + role.name))
+            }
+        }
+        return grantedAuthorities
     }
 
-    override fun getPassword(): String {
-        TODO("Not yet implemented")
+    override fun getPassword(): String? {
+        return password
     }
 
-    override fun getUsername(): String {
-        TODO("Not yet implemented")
+    override fun getUsername(): String? {
+        return name
     }
 
     override fun isAccountNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return isExpired
     }
 
     override fun isAccountNonLocked(): Boolean {
-        TODO("Not yet implemented")
+        return !isLocked
     }
 
     override fun isCredentialsNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return !isCredentialsExpired
     }
 
     override fun isEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return isEnabled
     }
 
 }
