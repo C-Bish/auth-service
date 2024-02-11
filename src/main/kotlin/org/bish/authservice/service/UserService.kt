@@ -1,7 +1,7 @@
 package org.bish.authservice.service
 
-import org.bish.authservice.dto.UserLoginDTO
 import org.bish.authservice.dto.UserRegistrationDTO
+import org.bish.authservice.models.User
 import org.bish.authservice.repo.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
@@ -9,8 +9,14 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
+
 @Service
-class UserService(@Autowired val userRepository: UserRepository, val passwordService: PasswordService): UserDetailsService {
+class UserService(
+    @Autowired
+    val userRepository: UserRepository,
+    val passwordService: PasswordService,
+    val jwtAuthenticationService: JwtAuthenticationService
+): UserDetailsService {
 
     /**
      * Loads a single User with a username.
@@ -18,8 +24,8 @@ class UserService(@Autowired val userRepository: UserRepository, val passwordSer
      * @param username
      * @return
      */
-    override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByName(username) ?: throw UsernameNotFoundException("User not found")
+    override fun loadUserByUsername(username: String): UserDetails? {
+        val user = userRepository.findByName(username) ?: throw UsernameNotFoundException("Cannot find user: $username")
         return user
     }
 
@@ -45,11 +51,15 @@ class UserService(@Autowired val userRepository: UserRepository, val passwordSer
     /**
      * Performs login process for a user.
      *
-     * @param userDTO
+     * @param user
      * @return
      */
-    fun login(userDTO: UserLoginDTO) : Boolean {
-        return true
+    fun login(user: User) : String? {
+        try {
+            return jwtAuthenticationService.generateToken(user.name)
+        } catch (ex: Exception) {
+            return null
+        }
     }
 
     /**
