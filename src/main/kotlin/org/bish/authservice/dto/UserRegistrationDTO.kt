@@ -1,6 +1,6 @@
 package org.bish.authservice.dto
 
-import org.bish.authservice.models.User
+import org.bish.authservice.model.User
 
 class UserRegistrationDTO(
     val name: String,

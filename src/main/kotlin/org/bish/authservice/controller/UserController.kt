@@ -1,8 +1,8 @@
-package org.bish.authservice.controllers
+package org.bish.authservice.controller
 
 import org.bish.authservice.dto.UserLoginDTO
 import org.bish.authservice.dto.UserRegistrationDTO
-import org.bish.authservice.models.User
+import org.bish.authservice.model.User
 import org.bish.authservice.service.UserService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

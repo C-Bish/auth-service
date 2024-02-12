@@ -1,7 +1,7 @@
 package org.bish.authservice.service
 
 import org.bish.authservice.dto.UserRegistrationDTO
-import org.bish.authservice.models.User
+import org.bish.authservice.model.User
 import org.bish.authservice.repo.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails

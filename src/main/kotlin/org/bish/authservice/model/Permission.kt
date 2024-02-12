@@ -1,4 +1,4 @@
-package org.bish.authservice.models
+package org.bish.authservice.model
 
 import jakarta.annotation.Generated
 import jakarta.persistence.Column

@@ -1,4 +1,4 @@
-package org.bish.authservice.models
+package org.bish.authservice.model
 
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority

@@ -1,6 +1,6 @@
 package org.bish.authservice.repo
 
-import org.bish.authservice.models.User
+import org.bish.authservice.model.User
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository : JpaRepository<User, Long> {

@@ -1,6 +1,6 @@
 package org.bish.authservice.config
 
-import org.bish.authservice.filters.JwtAuthenticationFilter
+import org.bish.authservice.filter.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
