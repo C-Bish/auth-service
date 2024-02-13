@@ -1,8 +1,11 @@
 package org.bish.authservice.service
 
+import io.jsonwebtoken.JwtException
 import org.bish.authservice.dto.UserRegistrationDTO
 import org.bish.authservice.model.User
 import org.bish.authservice.repo.UserRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -17,6 +20,8 @@ class UserService(
     val passwordService: PasswordService,
     val jwtAuthenticationService: JwtAuthenticationService
 ): UserDetailsService {
+
+    private final val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Loads a single User with a username.
@@ -46,6 +51,7 @@ class UserService(
         }
 
         // User cannot be registered as username is taken.
+        log.warn("User registration failed due to duplicate username.")
         return false
     }
 
@@ -58,7 +64,8 @@ class UserService(
     fun login(user: User) : String? {
         try {
             return jwtAuthenticationService.generateToken(user.name)
-        } catch (ex: Exception) {
+        } catch (ex: JwtException) {
+            log.error("Error generating token for user: ${user.name}.")
             return null
         }
     }
