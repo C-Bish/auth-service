@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 
 @Service
@@ -41,6 +42,7 @@ class UserService(
      * @param userDTO
      * @return
      */
+    @Transactional
     fun registerUser(userDTO: UserRegistrationDTO) : Boolean {
         if (isUsernameAvailable(userDTO.name, userDTO.email)) {
             // Perform password hashing
