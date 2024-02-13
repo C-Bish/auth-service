@@ -1,5 +1,6 @@
 package org.bish.authservice.service
 
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.stereotype.Service
@@ -14,6 +15,7 @@ class JwtAuthenticationService {
     fun generateToken(username: String?): String {
         return Jwts.builder()
             .setSubject(username)
+            .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .signWith(SignatureAlgorithm.HS512, SECRET)
             .compact()
@@ -37,7 +39,10 @@ class JwtAuthenticationService {
             // Check token has not expired
             val now = Date()
             return !now.after(claims.expiration)
-        } catch (e: Exception) {
+        } catch (ex: JwtException) {
+            // Token validation failed
+            return false
+        } catch (ex: IllegalArgumentException) {
             // Token validation failed
             return false
         }
